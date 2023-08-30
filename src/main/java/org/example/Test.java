@@ -24,15 +24,14 @@ public class Test {
                     String carrier = ticket.get("carrier").getAsString();
                     String departureTime = ticket.get("departure_time").getAsString();
                     String arrivalTime = ticket.get("arrival_time").getAsString();
+                    double price = ticket.get("price").getAsDouble();
 
                     if (origin.equals("Владивосток") && destination.equals("Тель-Авив")) {
+                        prices.add(price);
                         int flightTime = calculateFlightTime(departureTime, arrivalTime);
-
                         minFlightTimes.put(carrier, Math.min(minFlightTimes.getOrDefault(carrier, flightTime), flightTime));
-                    }
 
-                    double price = ticket.get("price").getAsDouble();
-                    prices.add(price);
+                    }
                 }
 
 
@@ -45,7 +44,7 @@ public class Test {
                 System.out.println("\nPrice Statistics:");
                 System.out.println("Average Price: " + averagePrice);
                 System.out.println("Median Price: " + medianPrice);
-                System.out.println("\nThe difference between the average price and the median: " + (averagePrice-medianPrice));
+                System.out.println("\nThe difference between the average price and the median: " + Math.abs(averagePrice-medianPrice));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -62,7 +61,9 @@ public class Test {
         }
 
         private static double calculateMedian(List<Double> prices) {
-            List<Double> sortedPrices = prices.stream().sorted().toList();
+            //List<Double> sortedPrices = prices.stream().sorted().toList();
+            List<Double> sortedPrices = new ArrayList<>(prices);
+            Collections.sort(sortedPrices);
             int size = sortedPrices.size();
             if (size % 2 == 0) {
                 return (sortedPrices.get(size / 2 - 1) + sortedPrices.get(size / 2)) / 2;
